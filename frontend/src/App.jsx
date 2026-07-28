@@ -8,7 +8,7 @@ import Forecast from "./pages/Forecast";
 import Recommendations from "./pages/Recommendations";
 import Settings from "./pages/Settings";
 import Simulation from "./pages/Simulation";
-
+import CostHealth from "./pages/CostHealth";
 export default function App() {
   return (
     <MainLayout>
@@ -29,7 +29,7 @@ export default function App() {
         <Route path="/settings" element={<Settings />} />
 
         <Route path="/simulation" element={<Simulation />} />
-
+        <Route path="/health" element={<CostHealth />} />
       </Routes>
 
     </MainLayout>

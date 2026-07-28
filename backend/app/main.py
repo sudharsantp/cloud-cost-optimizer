@@ -1,5 +1,6 @@
+print("MAIN FILE LOADED")
 from fastapi import FastAPI
-from app.api import cost, budget, anomaly, optimize, sync, analytics, prediction,simulation
+from app.api import cost, budget, anomaly, optimize, sync, analytics, prediction,simulation,health
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
@@ -27,6 +28,11 @@ app.include_router(
     analytics.router,
     prefix="/analytics",
     tags=["Analytics"]
+)
+app.include_router(
+    health.router,
+    prefix="/health",
+    tags=["Health"]
 )
 
 app.include_router(
