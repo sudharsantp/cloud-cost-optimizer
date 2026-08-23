@@ -1,93 +1,101 @@
-import React from "react";
-
 export default function ScoreBreakdown({ health }) {
 
-    const metrics = [
+    const breakdown = health?.score_breakdown || {};
 
+    const items = [
         {
-            title: "Forecast",
-            value: health.forecast_score,
-            max: 20
+            key: "forecast",
+            label: "Forecast",
         },
-
         {
-            title: "Idle Resources",
-            value: health.idle_score,
-            max: 25
+            key: "idle_resources",
+            label: "Idle Resources",
         },
-
         {
-            title: "Budget",
-            value: health.budget_score,
-            max: 15
+            key: "budget",
+            label: "Budget",
         },
-
         {
-            title: "Anomaly",
-            value: health.anomaly_score,
-            max: 15
+            key: "anomaly",
+            label: "Billing Anomalies",
         },
-
         {
-            title: "Savings",
-            value: health.savings_score,
-            max: 10
+            key: "savings",
+            label: "Savings Opportunity",
         },
-
         {
-            title: "Utilization",
-            value: health.utilization_score,
-            max: 15
-        }
-
+            key: "utilization",
+            label: "EC2 Utilization",
+        },
     ];
 
     return (
+        <div className="score-breakdown-grid">
 
-        <div className="breakdown-grid">
+            {items.map((item) => {
 
-            {metrics.map((item) => {
+                const value =
+                    breakdown[item.key] || {};
 
-                const percentage = (item.value / item.max) * 100;
+                const score =
+                    Number(value.score || 0);
+
+                const maximum =
+                    Number(value.maximum || 0);
+
+                const percentage =
+                    maximum > 0
+                        ? (score / maximum) * 100
+                        : 0;
 
                 return (
-
                     <div
-                        key={item.title}
-                        className="metric-card"
+                        className="score-breakdown-card"
+                        key={item.key}
                     >
 
-                        <div className="metric-header">
+                        <div className="score-breakdown-top">
 
-                            <span>{item.title}</span>
+                            <div>
+                                <h3>
+                                    {item.label}
+                                </h3>
 
-                            <span>
+                                <span>
+                                    {score} / {maximum}
+                                </span>
+                            </div>
 
-                                {item.value}/{item.max}
-
-                            </span>
+                            <strong>
+                                {Math.round(percentage)}%
+                            </strong>
 
                         </div>
 
-                        <div className="progress-bar">
+                        <div className="score-breakdown-bar">
 
                             <div
-                                className="progress-fill"
                                 style={{
-                                    width: `${percentage}%`
+                                    width: `${percentage}%`,
                                 }}
                             />
 
                         </div>
 
-                    </div>
+                        {Number(value.impact || 0) > 0 && (
 
+                            <p>
+                                Score impact: -
+                                {value.impact}
+                            </p>
+
+                        )}
+
+                    </div>
                 );
 
             })}
 
         </div>
-
     );
-
 }

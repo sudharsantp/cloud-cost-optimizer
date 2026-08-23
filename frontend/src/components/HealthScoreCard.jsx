@@ -1,54 +1,43 @@
-import React from "react";
+export default function HealthScoreCard({
+    score,
+    status,
+}) {
 
-export default function HealthScoreCard({ score, status }) {
-
-    const getColor = () => {
-
-        if (score >= 90) return "#22c55e";   // Green
-
-        if (score >= 75) return "#3b82f6";   // Blue
-
-        if (score >= 60) return "#f59e0b";   // Orange
-
-        if (score >= 40) return "#ef4444";   // Red
-
-        return "#991b1b";
-
-    };
+    const safeScore =
+        Math.max(
+            0,
+            Math.min(100, Number(score || 0))
+        );
 
     return (
-
-        <div className="score-card">
+        <div className="health-score-card">
 
             <div
-                className="score-circle"
+                className="health-score-ring"
                 style={{
-                    borderColor: getColor(),
-                    color: getColor()
+                    "--score": `${safeScore * 3.6}deg`,
                 }}
             >
 
-                {score}
+                <div className="health-score-inner">
+
+                    <strong>
+                        {safeScore}
+                    </strong>
+
+                </div>
 
             </div>
 
-            <h2
-                className="score-status"
-                style={{
-                    color: getColor()
-                }}
-            >
+
+            <h2>
                 {status}
             </h2>
 
-            <p className="score-description">
-
+            <p>
                 Overall AWS Cost Health Score
-
             </p>
 
         </div>
-
     );
-
 }

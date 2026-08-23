@@ -1,12 +1,25 @@
 print("MAIN FILE LOADED")
+
 from fastapi import FastAPI
-from app.api import cost, budget, anomaly, optimize, sync, analytics, prediction,simulation,health
 from fastapi.middleware.cors import CORSMiddleware
+
+from app.api import (
+    cost,
+    budget,
+    anomaly,
+    optimize,
+    sync,
+    analytics,
+    prediction,
+    simulation,
+    health,
+)
 
 app = FastAPI(
     title="CloudWatch Billing Sentinel",
-    version="1.0.0"
+    version="1.0.0",
 )
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -19,32 +32,60 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.include_router(cost.router, prefix="/cost", tags=["Cost"])
-app.include_router(budget.router, prefix="/budget", tags=["Budget"])
-app.include_router(anomaly.router, prefix="/anomaly", tags=["Anomaly"])
-app.include_router(optimize.router, prefix="/optimize", tags=["Optimization"])
-app.include_router(sync.router, prefix="/sync", tags=["AWS Sync"])
+
+app.include_router(
+    cost.router,
+    prefix="/cost",
+    tags=["Cost"],
+)
+
+app.include_router(
+    budget.router,
+    prefix="/budget",
+    tags=["Budget"],
+)
+
+app.include_router(
+    anomaly.router,
+    prefix="/anomaly",
+    tags=["Anomaly"],
+)
+
+# IMPORTANT: registered only once
+app.include_router(
+    optimize.router,
+    prefix="/optimize",
+    tags=["Optimization"],
+)
+
+app.include_router(
+    sync.router,
+    prefix="/sync",
+    tags=["AWS Sync"],
+)
+
 app.include_router(
     analytics.router,
     prefix="/analytics",
-    tags=["Analytics"]
+    tags=["Analytics"],
 )
+
 app.include_router(
     health.router,
     prefix="/health",
-    tags=["Health"]
+    tags=["Health"],
 )
 
 app.include_router(
     prediction.router,
     prefix="/prediction",
-    tags=["Prediction"]
+    tags=["Prediction"],
 )
 
 app.include_router(
     simulation.router,
     prefix="/simulation",
-    tags=["Simulation"]
+    tags=["Simulation"],
 )
 
 
@@ -53,5 +94,5 @@ def root():
     return {
         "project": "CloudWatch Billing Sentinel",
         "version": "1.0.0",
-        "status": "Running"
+        "status": "Running",
     }
