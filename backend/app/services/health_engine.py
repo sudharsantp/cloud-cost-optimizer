@@ -584,9 +584,11 @@ class CostHealthScore:
                     "impact": savings_impact
                 },
                 "utilization": {
-                    "score": utilization_score_value,
-                    "maximum": 15,
-                    "impact": utilization_impact
+                "score": utilization_score_value,
+                "maximum": 15,
+                "impact": utilization_impact
                 }
             }
         }
+  
+

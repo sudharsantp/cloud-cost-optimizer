@@ -29,3 +29,5 @@ Thumbs.db
 # Celery
 celerybeat-schedule
 celerybeat.pid
+
+backend/costopt.db

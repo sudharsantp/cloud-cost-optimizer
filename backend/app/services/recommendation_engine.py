@@ -84,17 +84,40 @@ class RecommendationEngine:
 
     def get_cpu_utilization(
         self,
-        instance_id
+        instance_id,
+        launch_time=None
     ):
 
         end_time = datetime.now(
             timezone.utc
         )
 
-        start_time = (
-            end_time
-            - timedelta(days=7)
+        # -----------------------------------------------------
+        # Use the instance launch time when available.
+        #
+        # This prevents a newly launched instance from being
+        # incorrectly described as having "7 days" of data.
+        # -----------------------------------------------------
+
+        default_start = (
+            end_time - timedelta(days=7)
         )
+
+        if launch_time:
+
+            if launch_time.tzinfo is None:
+                launch_time = launch_time.replace(
+                    tzinfo=timezone.utc
+                )
+
+            start_time = max(
+                launch_time,
+                default_start
+            )
+
+        else:
+
+            start_time = default_start
 
         try:
 
@@ -138,10 +161,18 @@ class RecommendationEngine:
             if not values:
                 return None
 
-            return round(
-                sum(values) / len(values),
-                2
-            )
+            return {
+                "average_cpu": round(
+                    sum(values) / len(values),
+                    2
+                ),
+
+                "datapoint_count": len(values),
+
+                "start_time": start_time,
+
+                "end_time": end_time
+            }
 
         except Exception as e:
 
@@ -176,15 +207,78 @@ class RecommendationEngine:
 
         for instance in instances:
 
-            cpu = self.get_cpu_utilization(
-                instance["instance_id"]
+            cpu_data = self.get_cpu_utilization(
+                instance["instance_id"],
+                instance.get("launch_time")
             )
 
-            if cpu is None:
+            if cpu_data is None:
                 continue
 
-            # Underutilized EC2:
-            # average CPU < 10% over 7 days
+            cpu = cpu_data["average_cpu"]
+
+            datapoint_count = (
+                cpu_data["datapoint_count"]
+            )
+
+            launch_time = instance.get(
+                "launch_time"
+            )
+
+            # -------------------------------------------------
+            # Determine the actual measurement period.
+            # -------------------------------------------------
+
+            if launch_time:
+
+                if launch_time.tzinfo is None:
+                    launch_time = launch_time.replace(
+                        tzinfo=timezone.utc
+                    )
+
+                age = (
+                    datetime.now(timezone.utc)
+                    - launch_time
+                )
+
+                age_days = max(
+                    age.total_seconds() / 86400,
+                    0
+                )
+
+            else:
+
+                age_days = 7
+
+            # -------------------------------------------------
+            # Human-readable measurement period
+            # -------------------------------------------------
+
+            if age_days < 1:
+
+                measurement_period = (
+                    "the available CloudWatch "
+                    "datapoints since launch"
+                )
+
+            elif age_days < 7:
+
+                measurement_period = (
+                    f"the available CloudWatch "
+                    f"datapoints from the last "
+                    f"{age_days:.1f} days"
+                )
+
+            else:
+
+                measurement_period = (
+                    "the available CloudWatch "
+                    "datapoints over the last 7 days"
+                )
+
+            # -------------------------------------------------
+            # UNDERUTILIZED EC2
+            # -------------------------------------------------
 
             if cpu < 10:
 
@@ -194,7 +288,7 @@ class RecommendationEngine:
                         "UNDERUTILIZED_EC2",
 
                     "priority":
-                        "HIGH",
+                        "MEDIUM",
 
                     "service":
                         "EC2",
@@ -207,20 +301,39 @@ class RecommendationEngine:
 
                     "reason": (
                         f"Average CPU utilization is "
-                        f"{cpu}% over the last 7 days."
+                        f"{cpu:.2f}% based on "
+                        f"{measurement_period}, "
+                        f"indicating low CPU utilization."
                     ),
 
                     "metric": {
-                        "cpu_utilization": cpu
+
+                        "cpu_utilization":
+                            cpu,
+
+                        "datapoints":
+                            datapoint_count,
+
+                        "measurement_period":
+                            measurement_period
                     },
 
                     "estimated_monthly_savings":
-                        0,
+                        None,
 
                     "action": (
-                        "Consider stopping or "
-                        "rightsizing this instance."
-                    )
+                        "Review whether this instance "
+                        "is required continuously. "
+                        "If it is used only for testing "
+                        "or development, stop it when "
+                        "not in use. If it is a persistent "
+                        "workload, evaluate rightsizing "
+                        "based on sustained CPU, memory, "
+                        "and workload requirements."
+                    ),
+
+                    "detection_method":
+                        "CloudWatch CPU utilization"
                 })
 
         return recommendations
@@ -247,9 +360,6 @@ class RecommendationEngine:
             ] = len(volumes)
 
             for volume in volumes:
-
-                # "available" means the volume
-                # is not attached to an instance.
 
                 if volume.get("State") == "available":
 
@@ -289,13 +399,16 @@ class RecommendationEngine:
                         },
 
                         "estimated_monthly_savings":
-                            0,
+                            None,
 
                         "action": (
                             "Review and delete the "
                             "volume if it is no longer "
                             "required."
-                        )
+                        ),
+
+                        "detection_method":
+                            "AWS EC2 resource analysis"
                     })
 
         except Exception as e:
@@ -330,9 +443,6 @@ class RecommendationEngine:
             ] = len(addresses)
 
             for address in addresses:
-
-                # No InstanceId means the address
-                # is not associated with an EC2 instance.
 
                 if not address.get("InstanceId"):
 
@@ -372,12 +482,15 @@ class RecommendationEngine:
                         "metric": {},
 
                         "estimated_monthly_savings":
-                            0,
+                            None,
 
                         "action": (
                             "Release the Elastic IP "
                             "if it is no longer required."
-                        )
+                        ),
+
+                        "detection_method":
+                            "AWS EC2 resource analysis"
                     })
 
         except Exception as e:
@@ -394,16 +507,14 @@ class RecommendationEngine:
 
     def generate_recommendations(self):
 
-        # Reset values every time the API is called.
-
         self.analysis_warnings = []
 
         self.analysis = {
-            "running_ec2_instances": 0,
-            "ebs_volumes": 0,
-            "unattached_ebs_volumes": 0,
-            "elastic_ips": 0,
-            "unused_elastic_ips": 0
+            "running_ec2_instances": None,
+            "ebs_volumes": None,
+            "unattached_ebs_volumes": None,
+            "elastic_ips": None,
+            "unused_elastic_ips": None
         }
 
         recommendations = []
@@ -423,17 +534,31 @@ class RecommendationEngine:
             self.analyze_elastic_ips()
         )
 
-        # Calculate total savings.
+        # -----------------------------------------------------
+        # Calculate savings only when an actual numeric value
+        # exists.
+        # -----------------------------------------------------
 
-        estimated_monthly_savings = sum(
+        numeric_savings = [
             float(
-                recommendation.get(
-                    "estimated_monthly_savings",
-                    0
-                ) or 0
+                recommendation[
+                    "estimated_monthly_savings"
+                ]
             )
+
             for recommendation
             in recommendations
+
+            if isinstance(
+                recommendation.get(
+                    "estimated_monthly_savings"
+                ),
+                (int, float)
+            )
+        ]
+
+        estimated_monthly_savings = sum(
+            numeric_savings
         )
 
         return {
@@ -470,7 +595,5 @@ class RecommendationEngine:
 
 
 # Optional global instance.
-# Existing code using RecommendationEngine()
-# will continue to work.
 
 engine = RecommendationEngine()
