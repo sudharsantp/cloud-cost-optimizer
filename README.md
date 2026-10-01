@@ -5,119 +5,160 @@
 ![React](https://img.shields.io/badge/React-Frontend-61DAFB)
 ![AWS](https://img.shields.io/badge/AWS-Cloud-orange)
 ![Machine Learning](https://img.shields.io/badge/ML-Prophet%20%7C%20ARIMA-red)
+![Database](https://img.shields.io/badge/Database-SQLite-lightgrey)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
-
----
 
 ## Overview
 
-The **AI-Powered AWS Cloud Cost Intelligence Platform** is a FinOps-inspired cloud cost optimization solution that enables organizations to monitor AWS spending, forecast future cloud costs, estimate deployment expenses before provisioning resources, and evaluate overall cloud financial health through an AI-driven **Cost Health Score**.
+The **AI-Powered AWS Cloud Cost Intelligence Platform** is a FinOps-oriented cloud cost analytics and optimization platform designed to help organizations understand, forecast, and optimize their AWS spending.
 
-The platform integrates **AWS Cost Explorer**, **AWS CloudWatch**, and the **AWS Pricing API** with machine learning forecasting models (**Prophet** and **ARIMA**) to provide actionable insights that help reduce cloud expenditure and improve cost efficiency.
+The platform integrates **AWS Cost Explorer, AWS CloudWatch, and the AWS Pricing API** to collect cost and resource information. Historical cost data is analyzed using **Prophet and ARIMA forecasting models** to estimate future spending.
+
+The platform also provides an automated **Cost Health Score**, cost optimization recommendations, anomaly insights, and EC2 deployment cost simulation through an interactive React dashboard.
 
 ---
 
 # Key Highlights
 
-- AI-based **Cost Health Score (0–100)**
-- Real-time AWS Cost Analytics
-- Prophet & ARIMA Cost Forecasting
-- 30-Day Cost Prediction
-- EC2 Deployment Cost Simulation
-- AWS Cost Explorer Integration
-- AWS Pricing API Integration
-- Interactive Dashboard
-- Intelligent Cost Optimization Recommendations
+- Automated **Cost Health Score (0–100)**
+- AWS Cost Analytics
+- Service-wise cost analysis
+- Prophet & ARIMA forecasting
+- 30-day cost forecasting
+- Forecast model comparison
+- AWS Pricing API integration
+- AWS Cost Explorer integration
+- CloudWatch monitoring
+- EC2 deployment cost simulation
+- Cost optimization recommendations
+- Interactive React dashboard
 
 ---
 
 # Features
 
-## Cost Analytics
+## 1. AWS Cost Analytics
 
-- Real-time AWS billing dashboard
-- Daily cost monitoring
+Analyze AWS spending through a centralized dashboard.
+
+### Capabilities
+
+- Daily AWS cost analysis
+- Historical cost tracking
 - Service-wise cost breakdown
-- Historical spending visualization
-- Cost trend analysis
+- Cost trend visualization
+- Spending analysis
+- AWS Cost Explorer integration
 
 ---
 
-## AI Cost Forecasting
+# 2. AI Cost Forecasting
 
-Forecast future AWS spending using multiple forecasting models.
+The platform uses time-series forecasting techniques to estimate future AWS spending.
 
-### Prophet Forecasting
+## Prophet Forecasting
+
+Prophet is used for:
 
 - Time-series forecasting
-- Trend detection
+- Trend analysis
+- Future cost estimation
 - 30-day cost prediction
 
-### ARIMA Forecasting
+## ARIMA Forecasting
 
-- Statistical forecasting
-- Historical trend analysis
-- Future expense estimation
+ARIMA is used for:
 
-### Forecast Comparison
+- Statistical time-series forecasting
+- Historical spending analysis
+- Future cost estimation
 
-- Prophet vs ARIMA comparison
-- Prediction summary
-- Forecast visualization
+## Forecast Comparison
+
+The platform provides:
+
+- Prophet vs ARIMA predictions
+- Forecast summaries
+- Future cost visualization
+- Model-based spending insights
 
 ---
 
-## AI Cost Health Assessment
+# 3. Cost Health Score
 
-Evaluate the overall financial health of your AWS account.
+The platform provides an automated **Cost Health Score from 0–100** to summarize the financial health of cloud spending.
 
-Features include:
+The health assessment considers cost-related signals and optimization indicators to provide an overall view of AWS cost efficiency.
 
-- AI-generated Cost Health Score (0–100)
-- Spending efficiency assessment
-- Resource utilization insights
-- Cost optimization recommendations
+### Features
+
+- Cost Health Score
+- Health status indicators
+- Cost efficiency analysis
 - Health score breakdown
-- Actionable FinOps suggestions
+- Optimization recommendations
+- Actionable FinOps insights
 
 ---
 
-## CloudWatch Monitoring
+# 4. Cost Optimization Recommendations
 
-Monitor cloud resource utilization alongside spending.
+The recommendation engine analyzes available cost information and identifies potential optimization opportunities.
 
-- CloudWatch metrics integration
+### Example Insights
+
+- High-cost services
+- Spending trends
+- Potential cost optimization areas
+- Resource utilization-related insights
+- Recommended actions
+
+The recommendations are presented through the dashboard to help users investigate potential areas for cost reduction.
+
+---
+
+# 5. AWS CloudWatch Monitoring
+
+The platform integrates AWS CloudWatch to provide resource utilization information alongside cost data.
+
+### Capabilities
+
+- CloudWatch metric integration
 - Resource monitoring
 - Historical metric visualization
-- Performance insights
+- Utilization insights
 
 ---
 
-## EC2 Cost Simulation
+# 6. EC2 Cost Simulation
 
-Estimate infrastructure expenses before deploying EC2 instances.
+The platform allows users to estimate EC2 infrastructure costs before deploying resources.
 
-Simulation Parameters
+### Simulation Parameters
 
 - AWS Region
-- Instance Type
+- EC2 Instance Type
 - Operating System
 - Storage Type
 - Storage Size
 - Usage Hours
 
-This enables users to evaluate deployment costs before provisioning cloud infrastructure.
+This provides users with an estimated infrastructure cost before provisioning resources.
 
 ---
 
-## Interactive Dashboard
+# 7. Interactive Dashboard
 
-The web dashboard provides:
+The React-based dashboard provides a centralized interface for AWS cost intelligence.
+
+### Dashboard Components
 
 - Cost analytics
-- Forecast graphs
-- Service distribution charts
-- EC2 simulation results
+- Cost trends
+- Service distribution
+- Forecasting
+- Forecast comparison
+- EC2 cost simulation
 - Cost Health Score
 - Optimization recommendations
 
@@ -134,204 +175,74 @@ The web dashboard provides:
 
 ## Backend
 
+- Python
 - FastAPI
 - SQLAlchemy
 - SQLite
 - Pandas
 - NumPy
 
-## Machine Learning
+## Machine Learning & Analytics
 
 - Prophet
-- ARIMA (Statsmodels)
+- ARIMA
+- Statsmodels
+- Scikit-learn
 
-## AWS Services
+## AWS
 
-- AWS Cost Explorer API
+- AWS Cost Explorer
 - AWS CloudWatch
 - AWS Pricing API
-- Boto3 SDK
+- Boto3
+
+## Development Tools
+
+- Git
+- GitHub
+- Postman
+- Uvicorn
 
 ---
 
-# Project Architecture
+# System Architecture
 
 ```text
-                    React Frontend
-                          │
-                          ▼
-                  FastAPI Backend
-                          │
-     ┌─────────────────────────────────────┐
-     │        Analytics Engine             │
-     │        Forecast Engine              │
-     │        Cost Health Engine           │
-     │        Simulation Engine            │
-     └─────────────────────────────────────┘
-               │                │
-               ▼                ▼
-     AWS Cost Explorer     AWS Pricing API
-               │                │
-               └────────┬───────┘
-                        ▼
-                 SQLite Database
-                        │
-                        ▼
-             Prophet & ARIMA Models
-```
+                         ┌──────────────────────┐
+                         │    React Frontend    │
+                         │      Dashboard       │
+                         └──────────┬───────────┘
+                                    │
+                                    ▼
+                         ┌──────────────────────┐
+                         │    FastAPI Backend   │
+                         └──────────┬───────────┘
+                                    │
+              ┌─────────────────────┼─────────────────────┐
+              │                     │                     │
+              ▼                     ▼                     ▼
+      ┌───────────────┐     ┌───────────────┐     ┌───────────────┐
+      │ Cost Analytics│     │ Forecasting   │     │ Cost Health & │
+      │    Engine     │     │    Engine     │     │ Recommendations│
+      └───────┬───────┘     └───────┬───────┘     └───────┬───────┘
+              │                     │                     │
+              └─────────────────────┼─────────────────────┘
+                                    │
+                                    ▼
+                         ┌──────────────────────┐
+                         │   SQLite Database    │
+                         └──────────────────────┘
+                                    ▲
+                                    │
+              ┌─────────────────────┼─────────────────────┐
+              │                     │                     │
+              ▼                     ▼                     ▼
+      ┌───────────────┐     ┌───────────────┐     ┌───────────────┐
+      │ AWS Cost      │     │ AWS CloudWatch│     │ AWS Pricing   │
+      │ Explorer      │     │               │     │ API           │
+      └───────────────┘     └───────────────┘     └───────────────┘
 
----
-
-# API Endpoints
-
-## Analytics
-
-```
-GET /analytics/daily-cost
-GET /analytics/service-breakdown
-```
-
-## Prediction
-
-```
-GET /prediction/arima
-GET /prediction/summary
-GET /prediction/compare
-GET /prediction/next-30-days
-```
-
-## Cost Health
-
-```
-GET /health/score
-GET /health/recommendations
-GET /health/breakdown
-```
-
-## Simulation
-
-```
-POST /simulation/ec2
-```
-
----
-
-# Installation
-
-## Clone Repository
-
-```bash
-git clone https://github.com/sudharsantp/cloud-cost-optimizer.git
-
-cd cloud-cost-optimizer
-```
-
----
-
-## Backend Setup
-
-```bash
-cd backend
-
-python -m venv venv
-
-venv\Scripts\activate
-
-pip install -r requirements.txt
-```
-
-Create a `.env` file
-
-```env
-AWS_ACCESS_KEY_ID=YOUR_ACCESS_KEY
-AWS_SECRET_ACCESS_KEY=YOUR_SECRET_KEY
-AWS_REGION=ap-south-1
-```
-
-Run the backend
-
-```bash
-uvicorn app.main:app --reload
-```
-
----
-
-## Frontend Setup
-
-```bash
-cd frontend
-
-npm install
-
-npm run dev
-```
-
----
-
-# Why This Project?
-
-Cloud cost management often requires navigating multiple AWS services such as Cost Explorer, CloudWatch, and Pricing APIs separately.
-
-This platform consolidates analytics, forecasting, deployment cost estimation, and AI-driven financial health assessment into a single dashboard, enabling users to make informed decisions before unnecessary cloud expenses occur.
-
----
-
-# Future Enhancements
-
-- AI-powered Cost Anomaly Detection
-- Budget Burn Rate Prediction
-- Reserved Instance Savings Advisor
-- Rightsizing Recommendations
-- Automated Weekly Cost Reports
-- PDF & CSV Report Generation
-- Docker Deployment
-- Kubernetes Cost Monitoring
-- Multi-Cloud Support (Azure & GCP)
-
----
-
-# Screenshots
-
-> Add screenshots here after deployment.
-
-### Dashboard
-
-```
-assets/dashboard.png
-```
-
-### Cost Forecasting
-
-```
-assets/forecast.png
-```
-
-### EC2 Cost Simulation
-
-```
-assets/simulation.png
-```
-
-### Cost Health Score
-
-```
-assets/cost-health.png
-```
-
----
-
-# License
-
-This project is licensed under the **MIT License**.
-
----
-
-# Author
-
-**Sudharsan T P**
-
-GitHub: https://github.com/sudharsantp
-
----
-
-⭐ If you found this project useful, consider giving it a star.
+                         Forecasting Models
+                         ┌─────────┬─────────┐
+                         │ Prophet │  ARIMA  │
+                         └─────────┴─────────┘
